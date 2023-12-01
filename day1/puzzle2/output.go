@@ -5,24 +5,56 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
-// Function to concatenate the first and last digits of a line
+// Variable to maps string digits to their numeric equivalents
+var stringToDigitMap = map[string]int{
+	"one":   1,
+	"two":   2,
+	"three": 3,
+	"four":  4,
+	"five":  5,
+	"six":   6,
+	"seven": 7,
+	"eight": 8,
+	"nine":  9,
+}
+
+// Function to check if a string contains any of the digit words as substrings
+func stringToDigit(s string) (int, bool) {
+	for word := range stringToDigitMap {
+		if strings.Contains(s, word) {
+			return stringToDigitMap[word], true
+		}
+	}
+	return 0, false
+}
+
+// Function to concatenate the first and last digits or string digits of a line
 func sumFirstLastDigit(line string) int {
 	firstDigit, lastDigit := -1, -1
 
-	// Find the first digit
-	for _, char := range line {
-		if unicode.IsDigit(char) {
-			firstDigit, _ = strconv.Atoi(string(char))
+	// Find the first digit or string digit
+	for i := 0; i < len(line); i++ {
+		substring := line[:i+1]
+		if digit, ok := stringToDigit(substring); ok {
+			firstDigit = digit
+			break
+		} else if unicode.IsDigit(rune(line[i])) {
+			firstDigit, _ = strconv.Atoi(string(line[i]))
 			break
 		}
 	}
 
-	// Find the last digit
+	// Find the last digit or string digit
 	for i := len(line) - 1; i >= 0; i-- {
-		if unicode.IsDigit(rune(line[i])) {
+		substring := line[i:]
+		if digit, ok := stringToDigit(substring); ok {
+			lastDigit = digit
+			break
+		} else if unicode.IsDigit(rune(line[i])) {
 			lastDigit, _ = strconv.Atoi(string(line[i]))
 			break
 		}
@@ -44,7 +76,7 @@ func sumFirstLastDigit(line string) int {
 	return result
 }
 
-// Function to process the file and sum the contacatented first and last digits of each line
+// Function to process the file and sum the contacatented first and last digits or string digits of each line
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {

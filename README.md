@@ -1,6 +1,6 @@
 # Advent of Code 2023 Solutions in Go
 
-This repository contains my solutions for the [Advent of Code 2023](https://adventofcode.com/2023) puzzles, implemented in Go.
+This repository contains my solutions for the [Advent of Code 2023](https://adventofcode.com/2023) puzzles, implemented using the Go programming language.
 
 ## Structure
 
