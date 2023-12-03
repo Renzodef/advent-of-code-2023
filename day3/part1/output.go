@@ -1,3 +1,4 @@
+// https://adventofcode.com/2023/day/3#part1
 package main
 
 import (
@@ -10,7 +11,6 @@ import (
 
 // Function to check if a number is adjacent to any symbol except for dots
 func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
-	// Check characters immediately before and after the number in the same row
 	if start > 0 && grid[row][start-1] != '.' && grid[row][start-1] != ' ' {
 		return true
 	}
@@ -18,7 +18,6 @@ func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
 		return true
 	}
 
-	// Check characters in the row above and below the number, if applicable
 	if row > 0 {
 		for i := start - 1; i <= end && i < len(grid[row-1]); i++ {
 			if i >= 0 && grid[row-1][i] != '.' && grid[row-1][i] != ' ' {
@@ -37,8 +36,9 @@ func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
 	return false
 }
 
-// Function to process the file and sum the part numbers in each line
-// A part number is a number in the line not adjacent to any symbol (just adjacent to dots even diagonally)
+// Function to process the file and sum the part numbers
+// A part number is a number adjacent to symbols, even diagonally
+// Periods (.) do not count as a symbol.
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -50,11 +50,11 @@ func processFile(filePath string) int {
 	scanner := bufio.NewScanner(file)
 
 	var grid []string
+	var sumPartNumbers int = 0
+
 	for scanner.Scan() {
 		grid = append(grid, scanner.Text())
 	}
-
-	var sumPartNumbers int = 0
 
 	for row, line := range grid {
 		start := -1
@@ -92,7 +92,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	// Call the function with the file path and print the result
 	totalSum := processFile("../input.txt")
 	fmt.Println(totalSum)
 }

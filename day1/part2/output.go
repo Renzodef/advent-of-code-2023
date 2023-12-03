@@ -1,3 +1,4 @@
+// https://adventofcode.com/2023/day/1#part2
 package main
 
 import (
@@ -22,7 +23,7 @@ var stringToDigitMap = map[string]int{
 	"nine":  9,
 }
 
-// Function to check if a string contains any of the digit words as substrings
+// Function to check if a string contains any of the digit words as substring
 func stringToDigit(s string) (int, bool) {
 	for word := range stringToDigitMap {
 		if strings.Contains(s, word) {
@@ -36,7 +37,6 @@ func stringToDigit(s string) (int, bool) {
 func sumFirstLastDigit(line string) int {
 	firstDigit, lastDigit := -1, -1
 
-	// Find the first digit or string digit
 	for i := 0; i < len(line); i++ {
 		substring := line[:i+1]
 		if digit, ok := stringToDigit(substring); ok {
@@ -48,7 +48,6 @@ func sumFirstLastDigit(line string) int {
 		}
 	}
 
-	// Find the last digit or string digit
 	for i := len(line) - 1; i >= 0; i-- {
 		substring := line[i:]
 		if digit, ok := stringToDigit(substring); ok {
@@ -60,12 +59,10 @@ func sumFirstLastDigit(line string) int {
 		}
 	}
 
-	// Handle case where no digits were found
 	if firstDigit == -1 || lastDigit == -1 {
 		return 0
 	}
 
-	// Concatenate the digits
 	concatenated := strconv.Itoa(firstDigit) + strconv.Itoa(lastDigit)
 	result, err := strconv.Atoi(concatenated)
 	if err != nil {
@@ -85,9 +82,10 @@ func processFile(filePath string) int {
 	}
 	defer file.Close()
 
+	var count int = 0
+
 	scanner := bufio.NewScanner(file)
 
-	var count int = 0
 	for scanner.Scan() {
 		line := scanner.Text()
 		count += sumFirstLastDigit(line)
@@ -102,7 +100,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	// Call the function with the file path and print the result
 	totalSum := processFile("../input.txt")
 	fmt.Println(totalSum)
 }

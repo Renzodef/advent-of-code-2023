@@ -1,3 +1,4 @@
+// https://adventofcode.com/2023/day/2#part2
 package main
 
 import (
@@ -9,33 +10,27 @@ import (
 )
 
 // Function to process a game string and return the power of the game
-// The power is the product of the minimum number of cubes for each color needed to resolve the game
 func processGame(gameString string) int {
 	var minimumValueForBlueCubes int = 0
 	var minimumValueForGreenCubes int = 0
 	var minimumValueForRedCubes int = 0
 
-	// Split the game string by ':'
 	parts := strings.Split(gameString, ":")
 	if len(parts) != 2 {
 		fmt.Println("Invalid game string format")
 		return 0
 	}
 
-	// Further split the second part by ';'
 	sets := strings.Split(parts[1], ";")
 
 	for _, set := range sets {
-		// Split each set by ','
 		setParts := strings.Split(set, ",")
 		for _, setPart := range setParts {
-			// Remove leading and trailing spaces
 			setPart = strings.TrimSpace(setPart)
 			if setPart == "" {
 				continue
 			}
 
-			// Split each part into number and color dividing the string by ' '
 			splitPart := strings.Fields(setPart)
 			if len(splitPart) != 2 {
 				fmt.Println("Invalid format:", setPart)
@@ -74,6 +69,7 @@ func processGame(gameString string) int {
 }
 
 // Function to process the file and sum the power of each game
+// The power is the product of the minimum number of cubes for each color needed to resolve the game
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -83,6 +79,7 @@ func processFile(filePath string) int {
 	defer file.Close()
 
 	var sumOfPowers int = 0
+
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
@@ -99,7 +96,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	// Call the function with the file path and print the result
 	sumOfIds := processFile("../input.txt")
 	fmt.Println(sumOfIds)
 }
