@@ -10,7 +10,7 @@ import (
 	"unicode"
 )
 
-// Variable to maps string digits to their numeric equivalents
+// Variable to map string digits to their numeric equivalents
 var stringToDigitMap = map[string]int{
 	"one":   1,
 	"two":   2,
@@ -73,7 +73,7 @@ func sumFirstLastDigit(line string) int {
 	return result
 }
 
-// Function to process the file and sum the contacatented first and last digits or string digits of each line
+// Function to process the file and sum the concatented first and last digits or string digits of each line
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {

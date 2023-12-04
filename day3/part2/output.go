@@ -9,7 +9,7 @@ import (
 	"unicode"
 )
 
-// Function to find the gears and sum their gear ratiosfunc sumGearRatios(grid []string, partNumbers map[int]map[int]int) int {
+// Function to sum the gear ratios of all the gears
 func sumGearRatios(partNumbers map[int]map[int]int, gearPositions map[int][]int) int {
 	var sum int = 0
 
@@ -47,7 +47,7 @@ func sumGearRatios(partNumbers map[int]map[int]int, gearPositions map[int][]int)
 	return sum
 }
 
-// Function to sum the gear ratios of all the gears
+// Function to check if a number is adjacent to any symbol except for dots
 func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
 	if start > 0 && grid[row][start-1] != '.' && grid[row][start-1] != ' ' {
 		return true

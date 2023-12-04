@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Function to process a game string and return the power of the game
+// Function to process a game and return its power
 func processGame(gameString string) int {
 	var minimumValueForBlueCubes int = 0
 	var minimumValueForGreenCubes int = 0

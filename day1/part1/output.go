@@ -41,7 +41,7 @@ func sumFirstLastDigit(line string) int {
 	return result
 }
 
-// Function to process the file and sum the contacatented first and last digits of each line
+// Function to process the file and sum the concatented first and last digits of each line
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {

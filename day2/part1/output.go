@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Function to process a game string and return the id of the game if it can be resolved
+// Function to process a game and return its id if it can be resolved
 func processGame(gameString string, cubesContainedInsideBag map[string]int) int {
 	parts := strings.Split(gameString, ":")
 	if len(parts) != 2 {

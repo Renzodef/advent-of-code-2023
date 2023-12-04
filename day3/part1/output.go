@@ -38,7 +38,7 @@ func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
 
 // Function to process the file and sum the part numbers
 // A part number is a number adjacent to symbols, even diagonally
-// Periods (.) do not count as a symbol.
+// Periods (.) do not count as a symbol
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
