@@ -1,4 +1,4 @@
-// https://adventofcode.com/2023/day/4#part1
+// https://adventofcode.com/2023/day/4#part2
 package main
 
 import (
@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Function to process a card and return its points
+// Function to process a card and return the count of its matching numbers
 func processCard(cardString string) int {
 	parts := strings.Split(cardString, ":")
 	if len(parts) != 2 {
@@ -17,7 +17,7 @@ func processCard(cardString string) int {
 		return 0
 	}
 
-	var points int = 0
+	var countOfMatchingNumbers int = 0
 
 	winningNumbersSet := strings.Split(parts[1], "|")[0]
 	cardNumbersSet := strings.Split(parts[1], "|")[1]
@@ -38,22 +38,16 @@ func processCard(cardString string) int {
 				return 0
 			}
 			if winningNumber == cardNumber {
-				if points == 0 {
-					points = 1
-				} else {
-					points *= 2
-				}
+				countOfMatchingNumbers += 1
 			}
 		}
 
 	}
 
-	return points
+	return countOfMatchingNumbers
 }
 
-// Function to process the file and sum the points of each card
-// Every winning number in a card is worth point
-// First 1 point, then doubled each time (2, 4, 8, ...)
+// Function to process the file and the number of scratchcards processed
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -62,13 +56,28 @@ func processFile(filePath string) int {
 	}
 	defer file.Close()
 
-	var sumOfPoints int = 0
+	var numberOfScratchcardsProcessed int
 
 	scanner := bufio.NewScanner(file)
 
+	var cardStrings []string
+
 	for scanner.Scan() {
-		cardString := scanner.Text()
-		sumOfPoints += processCard(cardString)
+		cardStrings = append(cardStrings, scanner.Text())
+	}
+
+	scratchcardsProcessedArray := make([]int, len(cardStrings))
+
+	for index, cardString := range cardStrings {
+		countOfMatchingNumbers := processCard(cardString)
+
+		scratchcardsProcessedArray[index]++
+
+		if countOfMatchingNumbers > 0 {
+			for i := index + 1; i < len(cardStrings) && i <= index+countOfMatchingNumbers; i++ {
+				scratchcardsProcessedArray[i] += scratchcardsProcessedArray[index]
+			}
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -76,7 +85,11 @@ func processFile(filePath string) int {
 		return 0
 	}
 
-	return sumOfPoints
+	for _, count := range scratchcardsProcessedArray {
+		numberOfScratchcardsProcessed += count
+	}
+
+	return numberOfScratchcardsProcessed
 }
 
 func main() {
