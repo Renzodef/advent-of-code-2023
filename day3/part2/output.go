@@ -11,28 +11,28 @@ import (
 
 // Function to sum the gear ratios of all the gears
 func sumGearRatios(partNumbers map[int]map[int]int, gearPositions map[int][]int) int {
-	var sum int = 0
+	var sum = 0
 
 	for row, gears := range gearPositions {
 		for _, gearPos := range gears {
 			adjacentParts := make([]int, 0)
 
 			for start, part := range partNumbers[row] {
-				var end int = start + len(strconv.Itoa(part)) - 1
+				var end = start + len(strconv.Itoa(part)) - 1
 				if start-1 <= gearPos && end+1 >= gearPos {
 					adjacentParts = append(adjacentParts, part)
 				}
 			}
 
 			for start, part := range partNumbers[row-1] {
-				var end int = start + len(strconv.Itoa(part)) - 1
+				var end = start + len(strconv.Itoa(part)) - 1
 				if start-1 <= gearPos && end+1 >= gearPos {
 					adjacentParts = append(adjacentParts, part)
 				}
 			}
 
 			for start, part := range partNumbers[row+1] {
-				var end int = start + len(strconv.Itoa(part)) - 1
+				var end = start + len(strconv.Itoa(part)) - 1
 				if start-1 <= gearPos && end+1 >= gearPos {
 					adjacentParts = append(adjacentParts, part)
 				}
@@ -83,7 +83,13 @@ func processFile(filePath string) int {
 		fmt.Println("Error opening file:", err)
 		return 0
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			return
+		}
+	}(file)
 
 	scanner := bufio.NewScanner(file)
 

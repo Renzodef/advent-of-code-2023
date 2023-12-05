@@ -17,7 +17,7 @@ func processCard(cardString string) int {
 		return 0
 	}
 
-	var points int = 0
+	var points = 0
 
 	winningNumbersSet := strings.Split(parts[1], "|")[0]
 	cardNumbersSet := strings.Split(parts[1], "|")[1]
@@ -60,9 +60,15 @@ func processFile(filePath string) int {
 		fmt.Println("Error opening file:", err)
 		return 0
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			return
+		}
+	}(file)
 
-	var sumOfPoints int = 0
+	var sumOfPoints = 0
 
 	scanner := bufio.NewScanner(file)
 

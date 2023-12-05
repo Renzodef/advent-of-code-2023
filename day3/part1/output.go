@@ -45,12 +45,18 @@ func processFile(filePath string) int {
 		fmt.Println("Error opening file:", err)
 		return 0
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			return
+		}
+	}(file)
 
 	scanner := bufio.NewScanner(file)
 
 	var grid []string
-	var sumPartNumbers int = 0
+	var sumPartNumbers = 0
 
 	for scanner.Scan() {
 		grid = append(grid, scanner.Text())

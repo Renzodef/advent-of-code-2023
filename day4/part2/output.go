@@ -17,7 +17,7 @@ func processCard(cardString string) int {
 		return 0
 	}
 
-	var countOfMatchingNumbers int = 0
+	var countOfMatchingNumbers = 0
 
 	winningNumbersSet := strings.Split(parts[1], "|")[0]
 	cardNumbersSet := strings.Split(parts[1], "|")[1]
@@ -54,7 +54,13 @@ func processFile(filePath string) int {
 		fmt.Println("Error opening file:", err)
 		return 0
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			return
+		}
+	}(file)
 
 	var numberOfScratchcardsProcessed int
 

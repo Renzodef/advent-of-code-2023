@@ -63,9 +63,15 @@ func processFile(filePath string, cubesContainedInsideBag map[string]int) int {
 		fmt.Println("Error opening file:", err)
 		return 0
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			return
+		}
+	}(file)
 
-	var sumOfIds int = 0
+	var sumOfIds = 0
 
 	scanner := bufio.NewScanner(file)
 

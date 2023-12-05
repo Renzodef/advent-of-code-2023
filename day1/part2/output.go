@@ -73,16 +73,22 @@ func sumFirstLastDigit(line string) int {
 	return result
 }
 
-// Function to process the file and sum the concatented first and last digits or string digits of each line
+// Function to process the file and sum the concatenated first and last digits or string digits of each line
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return 0
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			return
+		}
+	}(file)
 
-	var totalSumOfFirstLastDigits int = 0
+	var totalSumOfFirstLastDigits = 0
 
 	scanner := bufio.NewScanner(file)
 

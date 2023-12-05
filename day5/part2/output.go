@@ -1,4 +1,4 @@
-// https://adventofcode.com/2023/day/5#part1
+// https://adventofcode.com/2023/day/5#part2
 package main
 
 import (
@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+// SeedRange struct to hold the start and length of each seed range
+type SeedRange struct {
+	StartSeed   int
+	RangeLength int
+}
+
 // Transformation struct to hold each mapping's details
 type Transformation struct {
 	Destination int
@@ -17,7 +23,7 @@ type Transformation struct {
 }
 
 // Global variables to store the data
-var seeds []int
+var seedRanges []SeedRange
 var seedToSoilMap []Transformation
 var soilToFertilizerMap []Transformation
 var fertilizerToWaterMap []Transformation
@@ -26,19 +32,20 @@ var lightToTemperatureMap []Transformation
 var temperatureToHumidityMap []Transformation
 var humidityToLocationMap []Transformation
 
-// Function to parse the seeds
-func parseSeeds(line string) []int {
+// Function to parse the seed ranges
+func parseSeeds(line string) []SeedRange {
 	seedStrings := strings.Fields(line)
-	var seeds []int
-	for _, s := range seedStrings {
-		seed, err := strconv.Atoi(s)
-		if err != nil {
-			fmt.Println("Error parsing seed:", err)
+	var seedRanges []SeedRange
+	for i := 0; i < len(seedStrings); i += 2 {
+		startSeed, err1 := strconv.Atoi(seedStrings[i])
+		rangeLength, err2 := strconv.Atoi(seedStrings[i+1])
+		if err1 != nil || err2 != nil {
+			fmt.Println("Error parsing seed range:", err1, err2)
 			continue
 		}
-		seeds = append(seeds, seed)
+		seedRanges = append(seedRanges, SeedRange{StartSeed: startSeed, RangeLength: rangeLength})
 	}
-	return seeds
+	return seedRanges
 }
 
 // Function to parse the map entries
@@ -76,13 +83,12 @@ func processStage(value int, transformations []Transformation) int {
 	return value
 }
 
-// Function to get the lowest location number
-func getLowestLocationNumber() int {
+// Function to process a seed range and find the lowest location number in that range
+func getLowestLocationNumberInSeedRange(startSeed, rangeLength int) int {
 	lowestLocationNumber := -1
 
-	for _, seed := range seeds {
-		currentValue := seed
-
+	for i := 0; i < rangeLength; i++ {
+		currentValue := startSeed + i
 		currentValue = processStage(currentValue, seedToSoilMap)
 		currentValue = processStage(currentValue, soilToFertilizerMap)
 		currentValue = processStage(currentValue, fertilizerToWaterMap)
@@ -114,6 +120,7 @@ func processFile(filePath string) int {
 		}
 	}(file)
 
+	lowestLocationNumber := -1
 	var currentMap *[]Transformation
 
 	scanner := bufio.NewScanner(file)
@@ -122,7 +129,7 @@ func processFile(filePath string) int {
 		line := scanner.Text()
 
 		if strings.Contains(line, "seeds:") {
-			seeds = parseSeeds(strings.TrimPrefix(line, "seeds: "))
+			seedRanges = parseSeeds(strings.TrimPrefix(line, "seeds: "))
 			continue
 		}
 
@@ -153,7 +160,14 @@ func processFile(filePath string) int {
 		return 0
 	}
 
-	return getLowestLocationNumber()
+	for _, seedRange := range seedRanges {
+		lowestLocationNumberInSeedRange := getLowestLocationNumberInSeedRange(seedRange.StartSeed, seedRange.RangeLength)
+		if lowestLocationNumber == -1 || lowestLocationNumberInSeedRange < lowestLocationNumber {
+			lowestLocationNumber = lowestLocationNumberInSeedRange
+		}
+	}
+
+	return lowestLocationNumber
 }
 
 func main() {

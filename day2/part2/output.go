@@ -11,9 +11,9 @@ import (
 
 // Function to process a game and return its power
 func processGame(gameString string) int {
-	var minimumValueForBlueCubes int = 0
-	var minimumValueForGreenCubes int = 0
-	var minimumValueForRedCubes int = 0
+	var minimumValueForBlueCubes = 0
+	var minimumValueForGreenCubes = 0
+	var minimumValueForRedCubes = 0
 
 	parts := strings.Split(gameString, ":")
 	if len(parts) != 2 {
@@ -76,9 +76,15 @@ func processFile(filePath string) int {
 		fmt.Println("Error opening file:", err)
 		return 0
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Println("Error closing file:", err)
+			return
+		}
+	}(file)
 
-	var sumOfPowers int = 0
+	var sumOfPowers = 0
 
 	scanner := bufio.NewScanner(file)
 
