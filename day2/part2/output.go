@@ -96,6 +96,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	sumOfIds := processFile("../input.txt")
-	fmt.Println(sumOfIds)
+	sumOfPowers := processFile("../input.txt")
+	fmt.Println(sumOfPowers)
 }

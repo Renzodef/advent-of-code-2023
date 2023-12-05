@@ -50,13 +50,13 @@ func processFile(filePath string) int {
 	}
 	defer file.Close()
 
-	var count int = 0
+	var totalSumOfFirstLastDigits int = 0
 
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		count += sumFirstLastDigit(line)
+		totalSumOfFirstLastDigits += sumFirstLastDigit(line)
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -64,10 +64,10 @@ func processFile(filePath string) int {
 		return 0
 	}
 
-	return count
+	return totalSumOfFirstLastDigits
 }
 
 func main() {
-	totalSum := processFile("../input.txt")
-	fmt.Println(totalSum)
+	totalSumOfFirstLastDigits := processFile("../input.txt")
+	fmt.Println(totalSumOfFirstLastDigits)
 }
