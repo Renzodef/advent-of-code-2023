@@ -21,10 +21,6 @@ func processPattern(nodeMap map[string][2]string, pattern string) int {
 			}
 
 			steps++
-
-			if currentNode == "ZZZ" {
-				break
-			}
 		}
 	}
 

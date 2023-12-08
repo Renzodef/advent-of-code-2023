@@ -12,8 +12,9 @@ Each day's puzzles are organized in separate directories named `day1`, `day2`, e
 
 ## Running Solutions
 
-To run a solution, navigate to the specific puzzle directory (e.g., `day1/part1`) and use this command:
+To run a solution, navigate to the specific day directory (e.g., `day1`), create a file named `input.txt`, and insert your puzzle input.
 
+Then navigate to the `part1` or `part2` subdirectory and run the following command:
 ```bash
 go run output.go
 ```
