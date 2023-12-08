@@ -1,4 +1,3 @@
-// https://adventofcode.com/2023/day/7#part2
 package main
 
 import (
@@ -39,9 +38,6 @@ func calculateRankWithJollies(cardCounts map[rune]int) int {
 	case 1:
 		return 7 // Five of a kind
 	case 2:
-		if count, exists := cardCounts['J']; exists && count == 5 {
-			return 7 // Five of a kind with all jollies
-		}
 		for _, count := range cardCounts {
 			if count == 4 {
 				return 6 // Four of a kind

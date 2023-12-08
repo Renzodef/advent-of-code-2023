@@ -1,4 +1,3 @@
-// https://adventofcode.com/2023/day/6#part2
 package main
 
 import (
