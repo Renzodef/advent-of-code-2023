@@ -64,11 +64,6 @@ func processFile(filePath string) int {
 		totalSumOfFirstLastDigits += sumFirstLastDigit(line)
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	return totalSumOfFirstLastDigits
 }
 

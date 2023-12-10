@@ -85,11 +85,6 @@ func processFile(filePath string) int {
 		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	for _, count := range scratchcardsProcessedArray {
 		numberOfScratchcardsProcessed += count
 	}

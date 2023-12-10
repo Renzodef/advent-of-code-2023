@@ -94,11 +94,6 @@ func processFile(filePath string) int {
 		productOfNumbersOfWaysToWinRaces *= numberOfWaysToWinRace(time, distance)
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	return productOfNumbersOfWaysToWinRaces
 }
 

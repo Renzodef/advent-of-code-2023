@@ -79,11 +79,6 @@ func processFile(filePath string, cubesContainedInsideBag map[string]int) int {
 		sumOfIds += processGame(gameString, cubesContainedInsideBag)
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	return sumOfIds
 }
 

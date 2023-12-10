@@ -154,11 +154,6 @@ func processFile(filePath string) int {
 		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	for _, seedRange := range seedRanges {
 		lowestLocationNumberInSeedRange := getLowestLocationNumberInSeedRange(seedRange.StartSeed, seedRange.RangeLength)
 		if lowestLocationNumber == -1 || lowestLocationNumberInSeedRange < lowestLocationNumber {

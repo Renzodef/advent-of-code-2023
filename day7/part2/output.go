@@ -168,11 +168,6 @@ func processFile(filePath string) int {
 		totalSumOfProductsBidRank += hrb.Bid * hrb.Rank
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	return totalSumOfProductsBidRank
 }
 

@@ -86,11 +86,6 @@ func processFile(filePath string) int {
 		return 0
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	return numberOfWaysToWinRace(time, distance)
 }
 

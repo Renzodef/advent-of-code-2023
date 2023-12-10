@@ -92,11 +92,6 @@ func processFile(filePath string) int {
 		sumOfPowers += processGame(gameString)
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
-		return 0
-	}
-
 	return sumOfPowers
 }
 
