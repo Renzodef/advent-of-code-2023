@@ -73,13 +73,15 @@ func processFile(filePath string) int {
 		}
 	}
 
+	distortionFactor := 1000000
+
 	rowShift := make([]int, numRows)
 	colShift := make([]int, numCols)
 	for i := 1; i < numRows; i++ {
-		rowShift[i] = rowShift[i-1] + b2i(!rowHasHash[i-1])
+		rowShift[i] = rowShift[i-1] + (distortionFactor-1)*b2i(!rowHasHash[i-1])
 	}
 	for j := 1; j < numCols; j++ {
-		colShift[j] = colShift[j-1] + b2i(!colHasHash[j-1])
+		colShift[j] = colShift[j-1] + (distortionFactor-1)*b2i(!colHasHash[j-1])
 	}
 
 	var hashesEndingPosition []Point
