@@ -141,6 +141,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	sumGearRatios := processFile("../input.txt")
-	fmt.Println(sumGearRatios)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

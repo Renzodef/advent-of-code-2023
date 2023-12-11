@@ -157,6 +157,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	countPoints := processFile("../input.txt")
-	fmt.Println(countPoints)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

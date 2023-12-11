@@ -80,6 +80,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	sumOfPoints := processFile("../input.txt")
-	fmt.Println(sumOfPoints)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

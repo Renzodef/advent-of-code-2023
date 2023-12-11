@@ -165,6 +165,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	lowestLocationNumber := processFile("../input.txt")
-	fmt.Println(lowestLocationNumber)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

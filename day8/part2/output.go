@@ -94,6 +94,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	numberOfSteps := processFile("../input.txt")
-	fmt.Println(numberOfSteps)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

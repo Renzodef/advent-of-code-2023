@@ -89,6 +89,6 @@ func main() {
 		"blue":  14,
 	}
 
-	sumOfIds := processFile("../input.txt", cubesContainedInsideBag)
-	fmt.Println(sumOfIds)
+	result := processFile("../input.txt", cubesContainedInsideBag)
+	fmt.Println(result)
 }

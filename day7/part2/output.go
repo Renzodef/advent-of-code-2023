@@ -172,6 +172,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	totalSumOfProductsBidRank := processFile("../input.txt")
-	fmt.Println(totalSumOfProductsBidRank)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

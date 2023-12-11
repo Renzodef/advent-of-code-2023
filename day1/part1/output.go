@@ -68,6 +68,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	totalSumOfFirstLastDigits := processFile("../input.txt")
-	fmt.Println(totalSumOfFirstLastDigits)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

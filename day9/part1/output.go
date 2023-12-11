@@ -85,6 +85,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	sumOfNextValues := processFile("../input.txt")
-	fmt.Println(sumOfNextValues)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

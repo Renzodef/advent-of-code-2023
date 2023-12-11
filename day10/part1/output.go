@@ -124,6 +124,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	maximumDistance := processFile("../input.txt")
-	fmt.Println(maximumDistance)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }

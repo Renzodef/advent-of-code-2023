@@ -98,6 +98,6 @@ func processFile(filePath string) int {
 }
 
 func main() {
-	productOfNumbersOfWaysToWinRaces := processFile("../input.txt")
-	fmt.Println(productOfNumbersOfWaysToWinRaces)
+	result := processFile("../input.txt")
+	fmt.Println(result)
 }
