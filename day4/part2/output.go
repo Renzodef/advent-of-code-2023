@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func processCard(cardString string) int {
@@ -75,6 +76,9 @@ func processFile(filePath string) int {
 }
 
 func main() {
+	startTime := time.Now()
 	result := processFile("../input.txt")
-	fmt.Println(result)
+	elapsedTime := time.Since(startTime)
+	fmt.Println("Result:", result)
+	fmt.Printf("Execution time: %s\n", elapsedTime)
 }

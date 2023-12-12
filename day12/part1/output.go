@@ -6,76 +6,72 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
-func replaceAtIndex(in string, i int, r rune) string {
-	out := []rune(in)
-	out[i] = r
-	return string(out)
-}
-
-func calculateRunLengths(arrangement string) []int {
-	var runLengths []int
-	count := 0
-	for _, ch := range arrangement {
-		if ch == '#' {
+func canBeValid(combination string, groups []int) bool {
+	count, groupIndex := 0, 0
+	for _, c := range combination {
+		if c == '#' {
 			count++
-		} else if count > 0 {
-			runLengths = append(runLengths, count)
-			count = 0
-		}
-	}
-	if count > 0 {
-		runLengths = append(runLengths, count)
-	}
-	return runLengths
-}
-
-func isValidArrangement(arrangement string, groups []int) bool {
-	runLengths := calculateRunLengths(arrangement)
-	if len(runLengths) != len(groups) {
-		return false
-	}
-	for i, length := range runLengths {
-		if length != groups[i] {
-			return false
+			if groupIndex < len(groups) && count > groups[groupIndex] {
+				return false
+			}
+		} else if c == '.' {
+			if count > 0 {
+				if groupIndex >= len(groups) || count != groups[groupIndex] {
+					return false
+				}
+				groupIndex++
+				count = 0
+			}
 		}
 	}
 	return true
 }
 
-func countValidArrangements(index int, arrangement string, unknownIndices []int, groups []int) int {
-	if index == len(unknownIndices) {
-		if isValidArrangement(arrangement, groups) {
+func isValid(combination string, groups []int) bool {
+	index, count := 0, 0
+	for _, c := range combination + "." {
+		if c == '#' {
+			count++
+		} else {
+			if count > 0 {
+				if index >= len(groups) || count != groups[index] {
+					return false
+				}
+				index++
+				count = 0
+			}
+		}
+	}
+	return index == len(groups)
+}
+
+func generateCombinations(line string, pos int, current string, groups []int) int {
+	if pos == len(line) {
+		if isValid(current, groups) {
 			return 1
 		}
 		return 0
 	}
-
+	if !canBeValid(current, groups) {
+		return 0
+	}
 	count := 0
-	i := unknownIndices[index]
-	count += countValidArrangements(index+1, replaceAtIndex(arrangement, i, '.'), unknownIndices, groups)
-	count += countValidArrangements(index+1, replaceAtIndex(arrangement, i, '#'), unknownIndices, groups)
-
+	switch line[pos] {
+	case '.':
+		count += generateCombinations(line, pos+1, current+".", groups)
+	case '#':
+		count += generateCombinations(line, pos+1, current+"#", groups)
+	case '?':
+		count += generateCombinations(line, pos+1, current+".", groups)
+		count += generateCombinations(line, pos+1, current+"#", groups)
+	}
 	return count
 }
 
-func findUnknownIndices(input string) []int {
-	var indices []int
-	for i, ch := range input {
-		if ch == '?' {
-			indices = append(indices, i)
-		}
-	}
-	return indices
-}
-
-func countArrangements(input string, groups []int) int {
-	unknownIndices := findUnknownIndices(input)
-	return countValidArrangements(0, input, unknownIndices, groups)
-}
-
-func countArrangementsOfLine(line string) int {
+func countValidArrangements(line string) int {
 	parts := strings.Fields(line)
 	input := parts[0]
 	groupParts := strings.Split(parts[1], ",")
@@ -88,7 +84,7 @@ func countArrangementsOfLine(line string) int {
 		}
 		groups[i] = group
 	}
-	return countArrangements(input, groups)
+	return generateCombinations(input, 0, "", groups)
 }
 
 func processFile(filePath string) int {
@@ -107,12 +103,15 @@ func processFile(filePath string) int {
 	sumOfArrangements := 0
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		sumOfArrangements += countArrangementsOfLine(scanner.Text())
+		sumOfArrangements += countValidArrangements(scanner.Text())
 	}
 	return sumOfArrangements
 }
 
 func main() {
+	startTime := time.Now()
 	result := processFile("../input.txt")
-	fmt.Println(result)
+	elapsedTime := time.Since(startTime)
+	fmt.Println("Result:", result)
+	fmt.Printf("Execution time: %s\n", elapsedTime)
 }
