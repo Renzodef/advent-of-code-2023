@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// Function to calculate the number of steps required to go from AAA to ZZZ given the pattern
 func processPattern(nodeMap map[string][2]string, pattern string) int {
 	currentNode := "AAA"
 	steps := 0
@@ -19,15 +18,12 @@ func processPattern(nodeMap map[string][2]string, pattern string) int {
 			} else if direction == "R" {
 				currentNode = nodeMap[currentNode][1]
 			}
-
 			steps++
 		}
 	}
-
 	return steps
 }
 
-// Function to process the file and calculate the number of steps required to go from AAA to ZZZ given the pattern
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -40,14 +36,10 @@ func processFile(filePath string) int {
 			fmt.Println("Error closing file:", err)
 		}
 	}(file)
-
 	scanner := bufio.NewScanner(file)
-
 	scanner.Scan()
 	pattern := scanner.Text()
-
 	nodeMap := make(map[string][2]string)
-
 	for scanner.Scan() {
 		line := scanner.Text()
 		parts := strings.Split(line, " = ")
@@ -59,7 +51,6 @@ func processFile(filePath string) int {
 			}
 		}
 	}
-
 	return processPattern(nodeMap, pattern)
 }
 

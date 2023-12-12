@@ -8,19 +8,15 @@ import (
 	"strings"
 )
 
-// Function to process a card and return its points
 func processCard(cardString string) int {
 	parts := strings.Split(cardString, ":")
 	if len(parts) != 2 {
 		fmt.Println("Invalid game string format")
 		return 0
 	}
-
 	var points = 0
-
 	winningNumbersSet := strings.Split(parts[1], "|")[0]
 	cardNumbersSet := strings.Split(parts[1], "|")[1]
-
 	winningNumbers := strings.Fields(winningNumbersSet)
 	cardNumbers := strings.Fields(cardNumbersSet)
 	for _, winningNumberString := range winningNumbers {
@@ -29,7 +25,6 @@ func processCard(cardString string) int {
 			fmt.Println("Invalid number:", winningNumberString)
 			return 0
 		}
-
 		for _, cardNumberString := range cardNumbers {
 			cardNumber, err := strconv.Atoi(cardNumberString)
 			if err != nil {
@@ -44,15 +39,10 @@ func processCard(cardString string) int {
 				}
 			}
 		}
-
 	}
-
 	return points
 }
 
-// Function to process the file and sum the points of each card
-// Every winning number in a card is worth point
-// First 1 point, then doubled each time (2, 4, 8, ...)
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -66,16 +56,12 @@ func processFile(filePath string) int {
 			return
 		}
 	}(file)
-
 	var sumOfPoints = 0
-
 	scanner := bufio.NewScanner(file)
-
 	for scanner.Scan() {
 		cardString := scanner.Text()
 		sumOfPoints += processCard(cardString)
 	}
-
 	return sumOfPoints
 }
 

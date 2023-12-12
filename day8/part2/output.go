@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// Helper function to calculate the GCD (Greatest Common Divisor) of two integers
 func gcdTwo(a, b int) int {
 	for b != 0 {
 		a, b = b, a%b
@@ -15,12 +14,10 @@ func gcdTwo(a, b int) int {
 	return a
 }
 
-// Helper function to calculate the LCM (Least Common Multiple) of two integers
 func lcmTwo(a, b int) int {
 	return a * b / gcdTwo(a, b)
 }
 
-// Function to calculate the LCM (Least Common Multiple) of a slice of integers
 func lcm(numbers []int) int {
 	result := numbers[0]
 	for _, number := range numbers[1:] {
@@ -29,7 +26,6 @@ func lcm(numbers []int) int {
 	return result
 }
 
-// Function to calculate the number of steps for each starting node
 func processPattern(nodeMap map[string][2]string, pattern string) []int {
 	var steps []int
 	for node := range nodeMap {
@@ -56,7 +52,6 @@ func processPattern(nodeMap map[string][2]string, pattern string) []int {
 	return steps
 }
 
-// Function to process the file and calculate the number of steps required to go from each starting node to an end node
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -70,12 +65,9 @@ func processFile(filePath string) int {
 			return
 		}
 	}(file)
-
 	scanner := bufio.NewScanner(file)
-
 	scanner.Scan()
 	pattern := scanner.Text()
-
 	nodeMap := make(map[string][2]string)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -88,7 +80,6 @@ func processFile(filePath string) int {
 			}
 		}
 	}
-
 	steps := processPattern(nodeMap, pattern)
 	return lcm(steps)
 }

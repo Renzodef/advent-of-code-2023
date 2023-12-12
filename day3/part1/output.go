@@ -8,7 +8,6 @@ import (
 	"unicode"
 )
 
-// Function to check if a number is adjacent to any symbol except for dots
 func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
 	if start > 0 && grid[row][start-1] != '.' && grid[row][start-1] != ' ' {
 		return true
@@ -16,7 +15,6 @@ func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
 	if end < len(grid[row]) && grid[row][end] != '.' && grid[row][end] != ' ' {
 		return true
 	}
-
 	if row > 0 {
 		for i := start - 1; i <= end && i < len(grid[row-1]); i++ {
 			if i >= 0 && grid[row-1][i] != '.' && grid[row-1][i] != ' ' {
@@ -31,13 +29,9 @@ func isAdjacentToSymbols(grid []string, start int, end int, row int) bool {
 			}
 		}
 	}
-
 	return false
 }
 
-// Function to process the file and sum the part numbers
-// A part number is a number adjacent to symbols, even diagonally
-// Periods (.) do not count as a symbol
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -51,16 +45,12 @@ func processFile(filePath string) int {
 			return
 		}
 	}(file)
-
 	scanner := bufio.NewScanner(file)
-
 	var grid []string
 	var sumPartNumbers = 0
-
 	for scanner.Scan() {
 		grid = append(grid, scanner.Text())
 	}
-
 	for row, line := range grid {
 		start := -1
 		for i, ch := range line {
@@ -88,7 +78,6 @@ func processFile(filePath string) int {
 			}
 		}
 	}
-
 	return sumPartNumbers
 }
 

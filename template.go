@@ -6,7 +6,6 @@ import (
 	"os"
 )
 
-// Function to process the file
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {

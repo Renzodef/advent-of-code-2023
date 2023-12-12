@@ -9,7 +9,6 @@ import (
 	"unicode"
 )
 
-// Variable to map string digits to their numeric equivalents
 var stringToDigitMap = map[string]int{
 	"one":   1,
 	"two":   2,
@@ -22,7 +21,6 @@ var stringToDigitMap = map[string]int{
 	"nine":  9,
 }
 
-// Function to check if a string contains any of the digit words as substring
 func stringToDigit(s string) (int, bool) {
 	for word := range stringToDigitMap {
 		if strings.Contains(s, word) {
@@ -32,10 +30,8 @@ func stringToDigit(s string) (int, bool) {
 	return 0, false
 }
 
-// Function to concatenate the first and last digits or string digits of a line
 func sumFirstLastDigit(line string) int {
 	firstDigit, lastDigit := -1, -1
-
 	for i := 0; i < len(line); i++ {
 		substring := line[:i+1]
 		if digit, ok := stringToDigit(substring); ok {
@@ -46,7 +42,6 @@ func sumFirstLastDigit(line string) int {
 			break
 		}
 	}
-
 	for i := len(line) - 1; i >= 0; i-- {
 		substring := line[i:]
 		if digit, ok := stringToDigit(substring); ok {
@@ -57,22 +52,18 @@ func sumFirstLastDigit(line string) int {
 			break
 		}
 	}
-
 	if firstDigit == -1 || lastDigit == -1 {
 		return 0
 	}
-
 	concatenated := strconv.Itoa(firstDigit) + strconv.Itoa(lastDigit)
 	result, err := strconv.Atoi(concatenated)
 	if err != nil {
 		fmt.Println("Error converting concatenated string to int:", err)
 		return 0
 	}
-
 	return result
 }
 
-// Function to process the file and sum the concatenated first and last digits or string digits of each line
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -86,16 +77,12 @@ func processFile(filePath string) int {
 			return
 		}
 	}(file)
-
 	var totalSumOfFirstLastDigits = 0
-
 	scanner := bufio.NewScanner(file)
-
 	for scanner.Scan() {
 		line := scanner.Text()
 		totalSumOfFirstLastDigits += sumFirstLastDigit(line)
 	}
-
 	return totalSumOfFirstLastDigits
 }
 

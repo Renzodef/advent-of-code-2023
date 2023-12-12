@@ -8,7 +8,16 @@ import (
 	"strings"
 )
 
-// Function to process a line and return a slice of integers
+func numberOfWaysToWinRace(time int, distance int) int {
+	numberOfWaysToWinTheRace := 0
+	for i := 1; i < time; i++ {
+		if i*(time-i) > distance {
+			numberOfWaysToWinTheRace++
+		}
+	}
+	return numberOfWaysToWinTheRace
+}
+
 func processLine(line string) []int {
 	parts := strings.Fields(line)
 	numbers := make([]int, len(parts))
@@ -23,18 +32,6 @@ func processLine(line string) []int {
 	return numbers
 }
 
-// Function to sum the number of ways to win the race
-func numberOfWaysToWinRace(time int, distance int) int {
-	numberOfWaysToWinTheRace := 0
-	for i := 1; i < time; i++ {
-		if i*(time-i) > distance {
-			numberOfWaysToWinTheRace++
-		}
-	}
-	return numberOfWaysToWinTheRace
-}
-
-// Function to process the file and return the product of the numbers of ways to win the races
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -48,52 +45,41 @@ func processFile(filePath string) int {
 			return
 		}
 	}(file)
-
 	scanner := bufio.NewScanner(file)
-
 	if !scanner.Scan() {
 		fmt.Println("File contains no lines")
 		return 0
 	}
-
 	times := processLine(strings.Split(scanner.Text(), ":")[1])
 	if times == nil {
 		fmt.Println("Error processing time line:", err)
 		return 0
 	}
-
 	if !scanner.Scan() {
 		fmt.Println("File contains less than two lines")
 		return 0
 	}
-
 	distances := processLine(strings.Split(scanner.Text(), ":")[1])
 	if distances == nil {
 		fmt.Println("Error processing distance line:", err)
 		return 0
 	}
-
 	if len(times) != len(distances) {
 		fmt.Println("Time and distance lines have different lengths")
 		return 0
 	}
-
 	if scanner.Scan() {
 		fmt.Println("File contains more than two lines")
 		return 0
 	}
-
 	timeDistanceMap := make(map[int]int)
 	for i, time := range times {
 		timeDistanceMap[time] = distances[i]
 	}
-
 	productOfNumbersOfWaysToWinRaces := 1
-
 	for time, distance := range timeDistanceMap {
 		productOfNumbersOfWaysToWinRaces *= numberOfWaysToWinRace(time, distance)
 	}
-
 	return productOfNumbersOfWaysToWinRaces
 }
 
