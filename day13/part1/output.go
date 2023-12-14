@@ -7,54 +7,52 @@ import (
 	"time"
 )
 
-func transpose(pattern []string, n int) []string {
-	if n == 0 {
-		return []string{}
+func minInt(a, b int) int {
+	if a < b {
+		return a
 	}
-	m := len(pattern[0])
-	transposed := make([]string, m)
-	for i := 0; i < m; i++ {
-		var newRow []byte
-		for j := 0; j < n; j++ {
-			newRow = append(newRow, pattern[j][i])
+	return b
+}
+
+func isSpecular(matrix [][]byte, pivot int) bool {
+	for _, row := range matrix {
+		left := row[:pivot]
+		right := row[pivot:]
+		L := minInt(len(left), len(right))
+		for i := 0; i < L; i++ {
+			if left[len(left)-1-i] != right[i] {
+				return false
+			}
 		}
-		transposed[i] = string(newRow)
+	}
+	return true
+}
+
+func transpose(matrix [][]byte) [][]byte {
+	transposed := make([][]byte, len(matrix[0]))
+	for i := range transposed {
+		transposed[i] = make([]byte, len(matrix))
+		for j := range matrix {
+			transposed[i][j] = matrix[j][i]
+		}
 	}
 	return transposed
 }
 
-func verifyVerticalSymmetry(pattern []string, n int) (int, bool) {
-	transposedPattern := transpose(pattern, n)
-	return verifyHorizontalSymmetry(transposedPattern, len(transposedPattern))
-}
-
-func verifyHorizontalSymmetry(pattern []string, n int) (int, bool) {
-	for i := 0; i < n-1; i++ {
-		if pattern[i] == pattern[i+1] {
-			symmetric := true
-			for j := 1; j <= i && i+j+1 < n; j++ {
-				if pattern[i-j] != pattern[i+j+1] {
-					symmetric = false
-					break
+func findReflection(matrix [][]byte) int {
+	for vertical := 0; vertical <= 1; vertical++ {
+		if vertical == 1 {
+			matrix = transpose(matrix)
+		}
+		for x := 1; x < len(matrix[0]); x++ {
+			if isSpecular(matrix, x) {
+				res := x
+				if vertical == 1 {
+					res *= 100
 				}
-			}
-			if symmetric {
-				return i, true
+				return res
 			}
 		}
-	}
-	return 0, false
-}
-
-func findReflection(pattern []string) int {
-	n := len(pattern)
-	i, ok := verifyHorizontalSymmetry(pattern, n)
-	if ok {
-		return (i + 1) * 100
-	}
-	i, ok = verifyVerticalSymmetry(pattern, n)
-	if ok {
-		return i + 1
 	}
 	return 0
 }
@@ -74,19 +72,17 @@ func processFile(filePath string) int {
 	}(file)
 	scanner := bufio.NewScanner(file)
 	total := 0
-	pattern := make([]string, 0)
+	var matrix [][]byte
 	for scanner.Scan() {
 		line := scanner.Text()
 		if line == "" {
-			total += findReflection(pattern)
-			pattern = pattern[:0]
+			total += findReflection(matrix)
+			matrix = [][]byte{}
 		} else {
-			pattern = append(pattern, line)
+			matrix = append(matrix, []byte(line))
 		}
 	}
-	if len(pattern) > 0 {
-		total += findReflection(pattern)
-	}
+	total += findReflection(matrix)
 	return total
 }
 

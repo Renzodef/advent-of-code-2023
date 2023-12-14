@@ -7,6 +7,13 @@ import (
 	"time"
 )
 
+func toggleCharacter(c byte) byte {
+	if c == '#' {
+		return '.'
+	}
+	return '#'
+}
+
 func minInt(a, b int) int {
 	if a < b {
 		return a
@@ -37,13 +44,6 @@ func transpose(matrix [][]byte) [][]byte {
 		}
 	}
 	return transposed
-}
-
-func toggleCharacter(c byte) byte {
-	if c == '#' {
-		return '.'
-	}
-	return '#'
 }
 
 func findReflection(matrix [][]byte, ignore *int) int {

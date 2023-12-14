@@ -9,87 +9,70 @@ import (
 	"time"
 )
 
-type SeedRange struct {
-	StartSeed   int
-	RangeLength int
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
-type Transformation struct {
-	Destination int
-	Start       int
-	Modifier    int
+func maxInt(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
 
-var seedRanges []SeedRange
-var seedToSoilMap []Transformation
-var soilToFertilizerMap []Transformation
-var fertilizerToWaterMap []Transformation
-var waterToLightMap []Transformation
-var lightToTemperatureMap []Transformation
-var temperatureToHumidityMap []Transformation
-var humidityToLocationMap []Transformation
+func split(toSplit, where [2]int) [][2]int {
+	ts, te := toSplit[0], toSplit[1]
+	ws, we := where[0], where[1]
+	before := [2]int{ts, minInt(ws, te)}
+	intersection := [2]int{maxInt(ws, ts), minInt(we, te)}
+	after := [2]int{maxInt(we, ts), te}
+	var valid [][2]int
+	if before[0] < before[1] {
+		valid = append(valid, before)
+	}
+	if intersection[0] < intersection[1] {
+		valid = append(valid, intersection)
+	}
+	if after[0] < after[1] {
+		valid = append(valid, after)
+	}
+	return valid
+}
 
-func processStage(value int, transformations []Transformation) int {
-	for _, t := range transformations {
-		if t.Start <= value && value < t.Start+t.Modifier {
-			return t.Destination + (value - t.Start)
+func shred(seeds [][2]int, operations map[[2]int]int) [][2]int {
+	for operation := range operations {
+		var done [][2]int
+		for _, seed := range seeds {
+			done = append(done, split(seed, operation)...)
+		}
+		seeds = done
+	}
+	return seeds
+}
+
+func solve(steps []map[[2]int]int, seeds [][2]int) [][2]int {
+	for _, step := range steps {
+		seeds = shred(seeds, step)
+		for i, seed := range seeds {
+			for operation, offset := range step {
+				if operation[0] <= seed[0] && seed[1] <= operation[1] {
+					seeds[i] = [2]int{seed[0] + offset, seed[1] + offset}
+				}
+			}
 		}
 	}
-	return value
+	return seeds
 }
 
-func getLowestLocationNumberInSeedRange(startSeed, rangeLength int) int {
-	lowestLocationNumber := -1
-	for i := 0; i < rangeLength; i++ {
-		currentValue := startSeed + i
-		currentValue = processStage(currentValue, seedToSoilMap)
-		currentValue = processStage(currentValue, soilToFertilizerMap)
-		currentValue = processStage(currentValue, fertilizerToWaterMap)
-		currentValue = processStage(currentValue, waterToLightMap)
-		currentValue = processStage(currentValue, lightToTemperatureMap)
-		currentValue = processStage(currentValue, temperatureToHumidityMap)
-		currentValue = processStage(currentValue, humidityToLocationMap)
-		if lowestLocationNumber == -1 || currentValue < lowestLocationNumber {
-			lowestLocationNumber = currentValue
-		}
+func minRange(ranges [][2]int) int {
+	minVal := ranges[0][0]
+	for _, r := range ranges {
+		minVal = minInt(minVal, r[0])
 	}
-	return lowestLocationNumber
-}
-
-func parseMapEntry(line string, currentMap *[]Transformation) {
-	parts := strings.Fields(line)
-	if len(parts) != 3 {
-		fmt.Println("Invalid map entry:", line)
-		return
-	}
-	destination, err1 := strconv.Atoi(parts[0])
-	start, err2 := strconv.Atoi(parts[1])
-	modifier, err3 := strconv.Atoi(parts[2])
-	if err1 != nil || err2 != nil || err3 != nil {
-		fmt.Println("Error parsing map entry:", line)
-		return
-	}
-	transformation := Transformation{
-		Destination: destination,
-		Start:       start,
-		Modifier:    modifier,
-	}
-	*currentMap = append(*currentMap, transformation)
-}
-
-func parseSeeds(line string) []SeedRange {
-	seedStrings := strings.Fields(line)
-	var seedRanges []SeedRange
-	for i := 0; i < len(seedStrings); i += 2 {
-		startSeed, err1 := strconv.Atoi(seedStrings[i])
-		rangeLength, err2 := strconv.Atoi(seedStrings[i+1])
-		if err1 != nil || err2 != nil {
-			fmt.Println("Error parsing seed range:", err1, err2)
-			continue
-		}
-		seedRanges = append(seedRanges, SeedRange{StartSeed: startSeed, RangeLength: rangeLength})
-	}
-	return seedRanges
+	return minVal
 }
 
 func processFile(filePath string) int {
@@ -105,43 +88,37 @@ func processFile(filePath string) int {
 			return
 		}
 	}(file)
-	lowestLocationNumber := -1
-	var currentMap *[]Transformation
+	var seeds []int
+	var steps []map[[2]int]int
 	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	seedsLine := strings.TrimPrefix(scanner.Text(), "seeds: ")
+	for _, n := range strings.Fields(seedsLine) {
+		seed, _ := strconv.Atoi(n)
+		seeds = append(seeds, seed)
+	}
+	seeds1 := make([][2]int, 0, len(seeds)/2)
+	for i := 0; i < len(seeds); i += 2 {
+		seeds1 = append(seeds1, [2]int{seeds[i], seeds[i] + seeds[i+1]})
+	}
+	var currentStep map[[2]int]int
 	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.Contains(line, "seeds:") {
-			seedRanges = parseSeeds(strings.TrimPrefix(line, "seeds: "))
-			continue
-		}
-		if strings.HasSuffix(line, "map:") {
-			switch line {
-			case "seed-to-soil map:":
-				currentMap = &seedToSoilMap
-			case "soil-to-fertilizer map:":
-				currentMap = &soilToFertilizerMap
-			case "fertilizer-to-water map:":
-				currentMap = &fertilizerToWaterMap
-			case "water-to-light map:":
-				currentMap = &waterToLightMap
-			case "light-to-temperature map:":
-				currentMap = &lightToTemperatureMap
-			case "temperature-to-humidity map:":
-				currentMap = &temperatureToHumidityMap
-			case "humidity-to-location map:":
-				currentMap = &humidityToLocationMap
+		line := strings.TrimSpace(scanner.Text())
+		if strings.Contains(line, "map") {
+			if currentStep != nil {
+				steps = append(steps, currentStep)
 			}
-		} else if line != "" && currentMap != nil {
-			parseMapEntry(line, currentMap)
+			currentStep = make(map[[2]int]int)
+		} else if len(line) > 0 {
+			parts := strings.Fields(line)
+			destination, _ := strconv.Atoi(parts[0])
+			start, _ := strconv.Atoi(parts[1])
+			modifier, _ := strconv.Atoi(parts[2])
+			currentStep[[2]int{start, start + modifier}] = destination - start
 		}
 	}
-	for _, seedRange := range seedRanges {
-		lowestLocationNumberInSeedRange := getLowestLocationNumberInSeedRange(seedRange.StartSeed, seedRange.RangeLength)
-		if lowestLocationNumber == -1 || lowestLocationNumberInSeedRange < lowestLocationNumber {
-			lowestLocationNumber = lowestLocationNumberInSeedRange
-		}
-	}
-	return lowestLocationNumber
+	steps = append(steps, currentStep)
+	return minRange(solve(steps, seeds1))
 }
 
 func main() {
