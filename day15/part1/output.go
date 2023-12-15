@@ -4,8 +4,20 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
+
+func calculateHash(input string) int {
+	currentValue := 0
+	for _, char := range input {
+		asciiCode := int(char)
+		currentValue += asciiCode
+		currentValue *= 17
+		currentValue = currentValue % 256
+	}
+	return currentValue
+}
 
 func processFile(filePath string) int {
 	file, err := os.Open(filePath)
@@ -20,12 +32,16 @@ func processFile(filePath string) int {
 			return
 		}
 	}(file)
+	sumOfHashes := 0
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		fmt.Println(line)
+		lineParts := strings.Split(line, ",")
+		for _, linePart := range lineParts {
+			sumOfHashes += calculateHash(linePart)
+		}
 	}
-	return 0
+	return sumOfHashes
 }
 
 func main() {
