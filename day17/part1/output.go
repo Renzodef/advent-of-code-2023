@@ -72,18 +72,17 @@ func findMinHeatLoss() int {
 		visited[[4]int{x, y, direction, straightMoves}] = true
 		for i, d := range directions {
 			nx, ny := x+d[0], y+d[1]
-			if isValid(nx, ny, rows, cols) && (direction == -1 || direction == i || (direction+2)%4 != i) {
-				nx, ny := x+d[0], y+d[1]
-				if !isValid(nx, ny, rows, cols) {
-					continue
-				}
-				newStraightMoves := 1
-				if direction == i {
-					newStraightMoves = straightMoves + 1
-				}
-				if newStraightMoves <= 3 {
+			if isValid(nx, ny, rows, cols) && (direction+2)%4 != i {
+				newStraightMoves := straightMoves
+				if direction == -1 || direction == i {
+					newStraightMoves++
+					if newStraightMoves <= 3 {
+						newHeatLoss := block.HeatLoss + grid[nx][ny]
+						heap.Push(&pq, &Block{HeatLoss: newHeatLoss, X: nx, Y: ny, Direction: i, StraightMoves: newStraightMoves})
+					}
+				} else {
 					newHeatLoss := block.HeatLoss + grid[nx][ny]
-					heap.Push(&pq, &Block{HeatLoss: newHeatLoss, X: nx, Y: ny, Direction: i, StraightMoves: newStraightMoves})
+					heap.Push(&pq, &Block{HeatLoss: newHeatLoss, X: nx, Y: ny, Direction: i, StraightMoves: 1})
 				}
 			}
 		}
