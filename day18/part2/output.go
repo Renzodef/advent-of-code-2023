@@ -41,20 +41,23 @@ func findVertices(instructions []string) []Point {
 	var vertices []Point
 	x, y := 0, 0
 	for _, instruction := range instructions {
-		dir := strings.Fields(instruction)[0]
-		steps, err := strconv.Atoi(strings.Fields(instruction)[1])
+		hexCode := strings.Trim(strings.Fields(instruction)[2], "()")
+		hexCodeSteps := hexCode[1:6]
+		parsedInt, err := strconv.ParseInt(hexCodeSteps, 16, 32)
 		if err != nil {
-			fmt.Println("Error parsing number:", err)
+			fmt.Println("Error converting hex to int:", err)
 			return nil
 		}
+		steps := int(parsedInt)
+		dir := hexCode[6:]
 		switch dir {
-		case "U":
+		case "3":
 			y -= steps
-		case "D":
+		case "1":
 			y += steps
-		case "L":
+		case "2":
 			x -= steps
-		case "R":
+		case "0":
 			x += steps
 		}
 		vertices = append(vertices, Point{X: x, Y: y})
