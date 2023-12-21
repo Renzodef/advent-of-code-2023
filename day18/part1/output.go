@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -14,52 +13,100 @@ type Point struct {
 	X, Y int
 }
 
-func shoelaceFormula(vertices []Point) float64 {
-	n := len(vertices)
-	area := 0.0
-	for i := 0; i < n; i++ {
-		j := (i + 1) % n
-		area += float64(vertices[i].X*vertices[j].Y - vertices[j].X*vertices[i].Y)
+func countHashes(grid [][]rune) int {
+	count := 0
+	for _, row := range grid {
+		for _, cell := range row {
+			if cell == '#' {
+				count++
+			}
+		}
 	}
-	return 0.5 * area
+	return count
 }
 
-func pickTheorem(vertices []Point) int {
-	area := shoelaceFormula(vertices)
-	perimeter := 0
-	for i := 0; i < len(vertices); i++ {
-		j := (i + 1) % len(vertices)
-		dx := vertices[j].X - vertices[i].X
-		dy := vertices[j].Y - vertices[i].Y
-		perimeter += int(math.Sqrt(float64(dx*dx + dy*dy)))
+func floodFill(grid [][]rune, x, y int) {
+	if x < 0 || y < 0 || y >= len(grid) || x >= len(grid[y]) || grid[y][x] != '.' {
+		return
 	}
-	interiorArea := int(area) - perimeter/2 + 1
-	return interiorArea + perimeter
+	grid[y][x] = ' '
+	floodFill(grid, x-1, y)
+	floodFill(grid, x+1, y)
+	floodFill(grid, x, y-1)
+	floodFill(grid, x, y+1)
 }
 
-func findVertices(instructions []string) []Point {
-	var vertices []Point
-	x, y := 0, 0
+func move(direction string, steps int, position Point) Point {
+	switch direction {
+	case "U":
+		position.Y -= steps
+	case "D":
+		position.Y += steps
+	case "L":
+		position.X -= steps
+	case "R":
+		position.X += steps
+	}
+	return position
+}
+
+func createGrid(instructions []string) [][]rune {
+	position := Point{0, 0}
+	minX, maxX, minY, maxY := 0, 0, 0, 0
 	for _, instruction := range instructions {
-		dir := strings.Fields(instruction)[0]
-		steps, err := strconv.Atoi(strings.Fields(instruction)[1])
-		if err != nil {
-			fmt.Println("Error parsing number:", err)
-			return nil
+		parts := strings.Fields(instruction)
+		if len(parts) < 2 {
+			continue
 		}
-		switch dir {
-		case "U":
-			y -= steps
-		case "D":
-			y += steps
-		case "L":
-			x -= steps
-		case "R":
-			x += steps
+		direction := parts[0]
+		steps, _ := strconv.Atoi(parts[1])
+		position = move(direction, steps, position)
+
+		if position.X < minX {
+			minX = position.X
 		}
-		vertices = append(vertices, Point{X: x, Y: y})
+		if position.X > maxX {
+			maxX = position.X
+		}
+		if position.Y < minY {
+			minY = position.Y
+		}
+		if position.Y > maxY {
+			maxY = position.Y
+		}
 	}
-	return vertices
+	gridWidth := maxX - minX + 1
+	gridHeight := maxY - minY + 1
+	grid := make([][]rune, gridHeight)
+	for i := range grid {
+		grid[i] = make([]rune, gridWidth)
+		for j := range grid[i] {
+			grid[i][j] = '.'
+		}
+	}
+	position = Point{-minX, -minY} // Adjust the origin based on the min values
+	for _, instruction := range instructions {
+		parts := strings.Fields(instruction)
+		if len(parts) < 2 {
+			continue
+		}
+		direction := parts[0]
+		steps, _ := strconv.Atoi(parts[1])
+		for s := 0; s < steps; s++ {
+			switch direction {
+			case "U":
+				position.Y--
+			case "D":
+				position.Y++
+			case "L":
+				position.X--
+			case "R":
+				position.X++
+			}
+			grid[position.Y][position.X] = '#'
+		}
+	}
+	return grid
 }
 
 func processFile(filePath string) int {
@@ -80,8 +127,24 @@ func processFile(filePath string) int {
 	for scanner.Scan() {
 		instructions = append(instructions, scanner.Text())
 	}
-	vertices := findVertices(instructions)
-	return pickTheorem(vertices)
+	grid := createGrid(instructions)
+	for x := 0; x < len(grid[0]); x++ {
+		floodFill(grid, x, 0)
+		floodFill(grid, x, len(grid)-1)
+	}
+	for y := 0; y < len(grid); y++ {
+		floodFill(grid, 0, y)
+		floodFill(grid, len(grid[0])-1, y)
+	}
+	for y, row := range grid {
+		for x := range row {
+			if grid[y][x] == '.' {
+				grid[y][x] = '#'
+			}
+		}
+	}
+	hashCount := countHashes(grid)
+	return hashCount
 }
 
 func main() {
