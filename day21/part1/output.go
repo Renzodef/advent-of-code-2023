@@ -11,16 +11,15 @@ type Point struct {
 	X, Y int
 }
 
-var (
-	grid  [][]rune
-	steps = 64
-)
+const Steps = 64
+
+var grid [][]rune
 
 func countEvenDistances(distancesMatrix [][]int) int {
 	count := 0
 	for _, row := range distancesMatrix {
 		for _, dist := range row {
-			if dist != -1 && dist <= steps && dist%2 == 0 {
+			if dist != -1 && dist <= Steps && dist%2 == 0 {
 				count++
 			}
 		}
