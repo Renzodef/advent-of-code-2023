@@ -17,7 +17,7 @@ var (
 )
 
 func isValid(p Point) bool {
-	return p.X >= 0 && p.Y >= 0 && p.X < len(grid) && p.Y < len(grid[p.X]) && grid[p.X][p.Y] != '#'
+	return p.Y >= 0 && p.X >= 0 && p.Y < len(grid) && p.X < len(grid[p.Y]) && grid[p.Y][p.X] != '#'
 }
 
 func dfs(current Point, path []Point, start Point, end Point) {
@@ -28,27 +28,27 @@ func dfs(current Point, path []Point, start Point, end Point) {
 		paths = append(paths, append(path, current))
 		return
 	}
-	original := grid[current.X][current.Y]
-	grid[current.X][current.Y] = '#'
+	original := grid[current.Y][current.X]
+	grid[current.Y][current.X] = '#'
 	if current != start {
 		path = append(path, current)
 	}
 	switch original {
 	case '.', '>', '<', '^', 'v':
-		if original == '.' || original == 'v' {
+		if original == '.' || original == '>' {
 			dfs(Point{current.X + 1, current.Y}, path, start, end)
 		}
-		if original == '.' || original == '^' {
+		if original == '.' || original == '<' {
 			dfs(Point{current.X - 1, current.Y}, path, start, end)
 		}
-		if original == '.' || original == '>' {
+		if original == '.' || original == 'v' {
 			dfs(Point{current.X, current.Y + 1}, path, start, end)
 		}
-		if original == '.' || original == '<' {
+		if original == '.' || original == '^' {
 			dfs(Point{current.X, current.Y - 1}, path, start, end)
 		}
 	}
-	grid[current.X][current.Y] = original
+	grid[current.Y][current.X] = original
 }
 
 func processFile(filePath string) int {
@@ -69,27 +69,24 @@ func processFile(filePath string) int {
 		line := scanner.Text()
 		grid = append(grid, []rune(line))
 	}
-	start, end := Point{X: 0, Y: -1}, Point{X: len(grid) - 1, Y: -1}
-	for y, cell := range grid[start.X] {
+	start, end := Point{Y: 0, X: -1}, Point{Y: len(grid) - 1, X: -1}
+	for x, cell := range grid[start.Y] {
 		if cell == '.' {
-			start.Y = y
+			start.X = x
 			break
 		}
 	}
-	for y, cell := range grid[end.X] {
+	for x, cell := range grid[end.Y] {
 		if cell == '.' {
-			end.Y = y
+			end.X = x
 			break
 		}
 	}
-	if start.Y == -1 || end.Y == -1 {
+	if start.X == -1 || end.X == -1 {
 		fmt.Println("Start or end point not found")
 		return 0
 	}
 	dfs(start, []Point{}, start, end)
-	for _, path := range paths {
-		fmt.Println(len(path))
-	}
 	maxPathLength := 0
 	for _, path := range paths {
 		if len(path) > maxPathLength {

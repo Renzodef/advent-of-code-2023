@@ -84,7 +84,7 @@ func createGrid(instructions []string) [][]rune {
 			grid[i][j] = '.'
 		}
 	}
-	position = Point{-minX, -minY} // Adjust the origin based on the min values
+	position = Point{-minX, -minY}
 	for _, instruction := range instructions {
 		parts := strings.Fields(instruction)
 		if len(parts) < 2 {
